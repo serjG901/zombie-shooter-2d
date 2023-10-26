@@ -141,7 +141,7 @@ document.addEventListener("click", (e) => {
 });
 
 function drawBullets() {
-    if (bullets.length) console.dir(bullets), bullets.forEach((bullet) => bullet.draw());
+    if (bullets.length) bullets.forEach((bullet) => bullet.draw());
 }
 
 
@@ -197,7 +197,7 @@ function addSimpleZombie() {
             return [leftCorner, rightCorner];
         },
         draw() {
-            if (speed * this.steps < canvas.height / 2) {
+            if (speed * this.steps < canvas.height / 2 - 12) {
                 drawSimpleZombie(this.steps);
                 this.steps++;
             } else {
@@ -248,7 +248,7 @@ function isEndGame() {
 
 //------------------------------------------------------animate
 let zero = performance.now();
-const simpleZombieDuration = 1000;
+const simpleZombieDuration = 4000;
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLine();
@@ -268,3 +268,7 @@ function animate() {
 }
 
 animate();
+
+document.addEventListener("rotarydetent", function (event) {
+    alert("Rotation direction: " + event.detail.direction);
+});
