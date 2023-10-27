@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const shooterImage = document.getElementById("shooter");
 const zombieImage = document.getElementById("zombie");
+const bloodZombie = document.getElementById("bloodZombie");
 
 //---------------------------------------------------------canvasRealWidth/canvasRealHeight
 let canvasRealWidth = canvas.width;
@@ -93,16 +94,18 @@ function drawShooter() {
         mouseInCanvasY
     );
     ctxRotateByAngle(angle);
-
+    /*  
     ctx.beginPath();
-    /*  ctx.moveTo(canvas.width / 2, canvas.height / 2 - 12);
-      ctx.lineTo(canvas.width / 2 - 8, canvas.height / 2 + 4);
-      ctx.lineTo(canvas.width / 2 + 8, canvas.height / 2 + 4);
-      ctx.lineTo(canvas.width / 2, canvas.height / 2 - 12);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "red";
-      ctx.lineCap = "round";
-      ctx.stroke();*/
+    ctx.moveTo(canvas.width / 2, canvas.height / 2 - 12);
+    ctx.lineTo(canvas.width / 2 - 8, canvas.height / 2 + 4);
+    ctx.lineTo(canvas.width / 2 + 8, canvas.height / 2 + 4);
+    ctx.lineTo(canvas.width / 2, canvas.height / 2 - 12);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "red";
+    ctx.lineCap = "round";
+    ctx.stroke();
+    ctx.closePath();
+    */
     ctx.drawImage(
         shooterImage,
         canvas.width / 2 - 16,
@@ -110,7 +113,6 @@ function drawShooter() {
         (14 * canvasRealWidth) / 512,
         (20 * canvasRealHeight) / 512
     );
-    ctx.closePath();
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
@@ -156,7 +158,7 @@ document.addEventListener("click", (e) => {
         },
         angle,
         draw() {
-            if (this.steps * speed < canvas.height / 2) {
+            if (this.steps * speed < canvas.height) {
                 darwPistolsBullet(this.steps);
                 this.steps++;
             } else {
@@ -251,20 +253,37 @@ function drawSimpleZombies() {
 
 //-------------------------------------blood splash
 
-function bloodSplash() {}
+function drawBloodSplash(angle, position) {
+    ctxRotateByAngle(angle);
+
+    ctx.drawImage(
+        bloodZombie,
+        canvas.width / 2 - 18,
+        position,
+        (24 * canvasRealWidth) / 512,
+        (24 * canvasRealHeight) / 512
+    );
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
 
 //----------------------------------------------------------------------collision
 function collision(bullets, zombies) {
     bullets.forEach((bullet) => {
         zombies.forEach((zombie) => {
             const [leftCorner, rightCorner] = zombie.getCorners();
+            const bulletPosition = bullet.getPosition();
+            const zombiePosition = zombie.getPosition();
             if (
                 bullet.angle > leftCorner &&
                 bullet.angle < rightCorner &&
-                bullet.getPosition() > zombie.getPosition() &&
-                bullet.getPosition() <
-                    zombie.getPosition() + zombie.zombieHeight
+                bulletPosition > zombiePosition &&
+                bulletPosition < zombiePosition + zombie.zombieHeight
             ) {
+                drawBloodSplash(
+                    bullet.angle,
+                    canvas.height / 2 - bulletPosition
+                );
                 filterByIdAtPlace(bullets, bullet.id);
                 filterByIdAtPlace(zombies, zombie.id);
                 score++;
@@ -310,7 +329,9 @@ function isEndGame() {
 
 //------------------------------------------------------animate
 let zero = performance.now();
+
 const simpleZombieDuration = 3000;
+
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLaserLine();
