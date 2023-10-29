@@ -120,6 +120,8 @@ const bulletStartPosition = shooterHeight / 2;
 const bulletWidth = 4;
 const bulletHeight = 6;
 function getDrawPistolsBullet() {
+    const bulletDamage = 1;
+    const isRightThrough = false;
     const speed = 8;
     let angle = getAngle(
         canvas.width,
@@ -151,18 +153,21 @@ function getDrawPistolsBullet() {
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
-    return [drawPistolsBullet, speed, angle];
+    return [drawPistolsBullet, speed, angle, bulletDamage, isRightThrough];
 }
 
 let bullets = [];
 let idBullet = 0;
 
 function addBulletInBullets() {
-    let [darwPistolsBullet, speed, angle] = getDrawPistolsBullet();
+    let [darwPistolsBullet, speed, angle, bulletDamage, isRightThrough] =
+        getDrawPistolsBullet();
     bullets.push({
         id: idBullet,
         steps: 0,
         speed,
+        bulletDamage,
+        isRightThrough,
         getPosition() {
             return bulletStartPosition + this.steps * speed;
         },
@@ -180,9 +185,17 @@ function addBulletInBullets() {
     idBullet++;
 }
 
+const pistolBullet = {
+    func: addBulletInBullets,
+    shotPerSecond: 10,
+};
+
 let timerAutoShoot = 0;
-function autoShoot(func) {
-    timerAutoShoot = setInterval(func, 100);
+function autoShoot(bulletType) {
+    timerAutoShoot = setInterval(
+        bulletType.func,
+        1000 / bulletType.shotPerSecond
+    );
 }
 function stopAutoShoot() {
     clearInterval(timerAutoShoot);
@@ -190,7 +203,7 @@ function stopAutoShoot() {
 
 //document.addEventListener("click", addBulletInBullets);
 
-canvas.addEventListener("mousedown", (e) => autoShoot(addBulletInBullets));
+canvas.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
 canvas.addEventListener("mouseup", (e) => stopAutoShoot());
 
 function drawBullets() {
@@ -204,6 +217,7 @@ function getDrawSimpleZombie() {
     const zombieWidth = 56;
     const zombieHeight = 28;
     const speed = 0.5;
+    const zombieLifes = 1;
     function drawSimpleZombie(steps = 0) {
         ctxRotateByAngle(angle);
         /*
@@ -252,15 +266,28 @@ function getDrawSimpleZombie() {
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
-    return [drawSimpleZombie, speed, angle, zombieWidth, zombieHeight];
+    return [
+        drawSimpleZombie,
+        speed,
+        angle,
+        zombieWidth,
+        zombieHeight,
+        zombieLifes,
+    ];
 }
 
 let zombies = [];
 let idZombie = 0;
 
 function addSimpleZombie() {
-    const [drawSimpleZombie, speed, angle, zombieWidth, zombieHeight] =
-        getDrawSimpleZombie();
+    const [
+        drawSimpleZombie,
+        speed,
+        angle,
+        zombieWidth,
+        zombieHeight,
+        zombieLifes,
+    ] = getDrawSimpleZombie();
     zombies.push({
         id: idZombie,
         steps: 0,
@@ -270,6 +297,7 @@ function addSimpleZombie() {
             return canvas.height / 2 - this.steps * speed;
         },
         angle,
+        zombieLifes,
         getCorners() {
             const r = this.getPosition();
             const sector = zombieWidth / r;
@@ -323,13 +351,18 @@ function collision(bullets, zombies) {
                 bulletPosition > zombiePosition + zombie.zombieHeight / 2 &&
                 bulletPosition < zombiePosition + zombie.zombieHeight
             ) {
+                zombie.zombieLifes -= bullet.bulletDamage;
                 drawBloodSplash(
                     bullet.angle,
                     canvas.height / 2 - bulletPosition
                 );
-                filterByIdAtPlace(bullets, bullet.id);
-                filterByIdAtPlace(zombies, zombie.id);
-                score++;
+                if (!bullet.isRightThrough) {
+                    filterByIdAtPlace(bullets, bullet.id);
+                }
+                if (zombie.zombieLifes < 0) {
+                    filterByIdAtPlace(zombies, zombie.id);
+                    score++;
+                }
             }
         });
     });
