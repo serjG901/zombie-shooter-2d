@@ -22,6 +22,7 @@ document.addEventListener("beforeunload", () => {
 //---------------------------------------------------------  mouseInCanvasX/mouseInCanvasY
 let mouseInCanvasX = 0;
 let mouseInCanvasY = 0;
+let lookAngle = 0;
 document.addEventListener("mousemove", (e) => {
     const mouseX =
         ((e.clientX - canvas.offsetLeft) * canvas.width) / canvasRealWidth;
@@ -31,6 +32,12 @@ document.addEventListener("mousemove", (e) => {
         mouseX < 0 ? 0 : mouseX > canvas.width ? canvas.width : mouseX;
     mouseInCanvasY =
         mouseY < 0 ? 0 : mouseY > canvas.height ? canvas.height : mouseY;
+    lookAngle = getAngle(
+        canvas.width,
+        canvas.height,
+        mouseInCanvasX,
+        mouseInCanvasY
+    );
 });
 
 //--------------------------------------------------------- support function
@@ -63,37 +70,28 @@ function ctxRotateByAngle(angle) {
 }
 //-------------------------------------------------------- draw functions
 
-//------------------------------line
-function drawLaserLine() {
-    const angle = getAngle(
-        canvas.width,
-        canvas.height,
-        mouseInCanvasX,
-        mouseInCanvasY
-    );
-    ctxRotateByAngle(angle);
+//------------------------------laser
+let laserStopPosition = -canvas.height / 2;
 
+function drawLaser() {
+    ctxRotateByAngle(lookAngle);
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2, canvas.height / 2);
-    ctx.lineTo(canvas.width / 2, -canvas.height / 2);
+    ctx.lineTo(canvas.width / 2, laserStopPosition);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(255,0,0,0.2)";
     ctx.lineCap = "round";
     ctx.stroke();
     ctx.closePath();
-
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
-//------------------------------body
+//------------------------------shooter
+const shooterWidth = 74;
+const shooterHeight = 74;
 function drawShooter() {
-    const angle = getAngle(
-        canvas.width,
-        canvas.height,
-        mouseInCanvasX,
-        mouseInCanvasY
-    );
-    ctxRotateByAngle(angle);
+    ctxRotateByAngle(lookAngle);
+
     /*  
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2, canvas.height / 2 - 12);
@@ -108,32 +106,44 @@ function drawShooter() {
     */
     ctx.drawImage(
         shooterImage,
-        canvas.width / 2 - 16,
-        canvas.height / 2 - 24,
-        (14 * canvasRealWidth) / 512,
-        (20 * canvasRealHeight) / 512
+        canvas.width / 2 - shooterWidth / 2,
+        canvas.height / 2 - shooterHeight / 2,
+        shooterWidth,
+        shooterHeight
     );
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 //------------------------------bullets
-
+const bulletStartPosition = shooterHeight / 2;
+const bulletWidth = 4;
+const bulletHeight = 6;
 function getDrawPistolsBullet() {
-    const speed = 4;
+    const speed = 8;
     let angle = getAngle(
         canvas.width,
         canvas.height,
         mouseInCanvasX,
         mouseInCanvasY
     );
+
     function drawPistolsBullet(step = 0) {
         ctxRotateByAngle(angle);
 
         ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, canvas.height / 2 - 24 - step * speed);
-        ctx.lineTo(canvas.width / 2, canvas.height / 2 - 30 - step * speed);
-        ctx.lineWidth = 4;
+        ctx.moveTo(
+            canvas.width / 2,
+            canvas.height / 2 -
+                bulletStartPosition -
+                bulletHeight -
+                step * speed
+        );
+        ctx.lineTo(
+            canvas.width / 2,
+            canvas.height / 2 - bulletStartPosition - step * speed
+        );
+        ctx.lineWidth = bulletWidth;
         ctx.strokeStyle = "orange";
         ctx.lineCap = "round";
         ctx.stroke();
@@ -147,14 +157,14 @@ function getDrawPistolsBullet() {
 let bullets = [];
 let idBullet = 0;
 
-document.addEventListener("click", (e) => {
+function addBulletInBullets() {
     let [darwPistolsBullet, speed, angle] = getDrawPistolsBullet();
     bullets.push({
         id: idBullet,
         steps: 0,
         speed,
         getPosition() {
-            return 30 + this.steps * speed;
+            return bulletStartPosition + this.steps * speed;
         },
         angle,
         draw() {
@@ -168,7 +178,20 @@ document.addEventListener("click", (e) => {
         },
     });
     idBullet++;
-});
+}
+
+let timerAutoShoot = 0;
+function autoShoot(func) {
+    timerAutoShoot = setInterval(func, 100);
+}
+function stopAutoShoot() {
+    clearInterval(timerAutoShoot);
+}
+
+//document.addEventListener("click", addBulletInBullets);
+
+canvas.addEventListener("mousedown", (e) => autoShoot(addBulletInBullets));
+canvas.addEventListener("mouseup", (e) => stopAutoShoot());
 
 function drawBullets() {
     if (bullets.length) bullets.forEach((bullet) => bullet.draw());
@@ -178,33 +201,53 @@ function drawBullets() {
 
 function getDrawSimpleZombie() {
     const angle = 2 * Math.PI * Math.random();
-    const zombieWidth = 24;
-    const zombieHeight = 12;
+    const zombieWidth = 56;
+    const zombieHeight = 28;
     const speed = 0.5;
     function drawSimpleZombie(steps = 0) {
         ctxRotateByAngle(angle);
-
-        /*   //---body
-           ctx.beginPath()
-           ctx.rect(canvas.width / 2 - zombieWidth / 2, steps * speed, zombieWidth, zombieHeight);
-           ctx.rect(canvas.width / 2 - zombieWidth / 2, steps * speed, zombieWidth / 4, zombieHeight * 2);
-           ctx.rect(canvas.width / 2 + zombieWidth / 2 - zombieWidth / 4, steps * speed, zombieWidth / 4, zombieHeight * 2);
-           ctx.fillStyle = 'green';
-           ctx.fill();
-           ctx.closePath();
-           //---head
-           ctx.beginPath()
-           ctx.rect(canvas.width / 2 - zombieWidth / 6, steps * speed, zombieWidth / 3, zombieHeight * 2 / 3);
-           ctx.fillStyle = 'black';
-           ctx.fill();
-           ctx.closePath();
-   */
+        /*
+        //---body
+        ctx.beginPath();
+        ctx.rect(
+            canvas.width / 2 - zombieWidth / 2,
+            steps * speed - zombieHeight,
+            zombieWidth,
+            zombieHeight
+        );
+        ctx.rect(
+            canvas.width / 2 - zombieWidth / 2,
+            steps * speed - zombieHeight,
+            zombieWidth / 4,
+            zombieHeight * 2
+        );
+        ctx.rect(
+            canvas.width / 2 + zombieWidth / 2 - zombieWidth / 4,
+            steps * speed - zombieHeight,
+            zombieWidth / 4,
+            zombieHeight * 2
+        );
+        ctx.fillStyle = "green";
+        ctx.fill();
+        ctx.closePath();
+        //---head
+        ctx.beginPath();
+        ctx.rect(
+            canvas.width / 2 - zombieWidth / 6,
+            steps * speed - zombieHeight,
+            zombieWidth / 3,
+            (zombieHeight * 2) / 3
+        );
+        ctx.fillStyle = "black";
+        ctx.fill();
+        ctx.closePath();
+*/
         ctx.drawImage(
             zombieImage,
-            canvas.width / 2 - zombieWidth / 2 - 9,
-            steps * speed - zombieHeight / 2 - 4,
-            (24 * canvasRealWidth) / 512,
-            (24 * canvasRealHeight) / 512
+            canvas.width / 2 - zombieWidth / 2,
+            steps * speed - zombieHeight,
+            zombieWidth,
+            zombieHeight * 2
         );
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -277,7 +320,7 @@ function collision(bullets, zombies) {
             if (
                 bullet.angle > leftCorner &&
                 bullet.angle < rightCorner &&
-                bulletPosition > zombiePosition &&
+                bulletPosition > zombiePosition + zombie.zombieHeight / 2 &&
                 bulletPosition < zombiePosition + zombie.zombieHeight
             ) {
                 drawBloodSplash(
@@ -292,6 +335,17 @@ function collision(bullets, zombies) {
     });
 }
 
+//----------------------laser collision
+function laserCollision() {
+    let zombiePosition = laserStopPosition;
+    laserStopPosition = zombies.find((zombie) => {
+        const [leftCorner, rightCorner] = zombie.getCorners();
+        zombiePosition = zombie.getPosition();
+        return lookAngle > leftCorner && lookAngle < rightCorner;
+    })
+        ? canvas.height / 2 - zombiePosition
+        : -canvas.height / 2;
+}
 //--------------------------------score
 
 function drawScore() {
@@ -330,20 +384,23 @@ function isEndGame() {
 //------------------------------------------------------animate
 let zero = performance.now();
 
-const simpleZombieDuration = 3000;
+const simpleZombieDuration = 4000;
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawLaserLine();
+    drawLaser();
     drawShooter();
     drawBullets();
     drawSimpleZombies();
-    const value = (performance.now() - zero) / simpleZombieDuration;
+    const value =
+        (performance.now() - zero) /
+        (simpleZombieDuration / Math.log2(score + 3));
     if (value > 1) {
         addSimpleZombie();
         zero = performance.now();
     }
     collision(bullets, zombies);
+    laserCollision();
     drawScore();
     drawLifes();
     isEndGame();
