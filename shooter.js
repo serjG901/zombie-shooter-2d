@@ -6,6 +6,7 @@ const zombieImage = document.getElementById("zombie");
 const bloodZombie = document.getElementById("bloodZombie");
 const shooterHearth = document.getElementById("shooterHearth");
 const zombieHearth = document.getElementById("zombieHearth");
+const scull = document.getElementById("scull");
 
 //---------------------------------------------------------canvasRealWidth/canvasRealHeight
 let canvasRealWidth = canvas.width;
@@ -245,14 +246,8 @@ function stopAutoShoot() {
 document.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
 document.addEventListener("mouseup", (e) => stopAutoShoot());
 
-document.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    autoShoot(pistolBullet);
-});
-document.addEventListener("touchend", (e) => {
-    e.preventDefault();
-    stopAutoShoot();
-});
+document.addEventListener("touchstart", (e) => autoShoot(pistolBullet));
+document.addEventListener("touchend", (e) => stopAutoShoot());
 
 function drawBullets() {
     if (bullets.length) bullets.forEach((bullet) => bullet.draw());
@@ -443,19 +438,21 @@ function laserCollision() {
 function drawScore() {
     ctx.beginPath();
     ctx.font = "30px monospace";
-    ctx.fillText(`score: ${score}`, canvas.width / 2 - 50, 40);
+    ctx.fillStyle = "white";
+    ctx.fillText(score, canvas.width / 2 + 10, 40);
     ctx.closePath();
+    ctx.drawImage(scull, canvas.width / 2 - 40, 16, 30, 30);
 }
 
 //-------------------lifes
-
+/*
 function drawLifes() {
     ctx.beginPath();
     ctx.font = "30px monospace";
     ctx.fillText(`lifes: ${lifes}`, canvas.width / 2 - 50, canvas.height - 40);
     ctx.closePath();
 }
-
+*/
 //------------------------------------------------------user statistics
 let score = 0;
 let lifes = 3;
@@ -494,7 +491,7 @@ function animate() {
     collision(bullets, zombies);
     laserCollision();
     drawScore();
-    drawLifes();
+    // drawLifes();
     isEndGame();
     requestAnimationFrame(animate);
 }

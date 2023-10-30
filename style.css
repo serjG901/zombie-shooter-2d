@@ -9,6 +9,7 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    background-color: black;
 }
 
 canvas {
@@ -19,4 +20,8 @@ canvas {
     /* border-radius: 50%; */
     filter: contrast(120%);
     box-sizing: border-box;
+}
+
+img {
+    display: none;
 }
