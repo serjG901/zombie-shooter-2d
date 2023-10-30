@@ -145,7 +145,7 @@ function drawShooter() {
         ctx.drawImage(
             shooterHearth,
             canvas.width / 2 - (lifes / 2 - i) * shooterHearthWidth,
-            canvas.height / 2 + shooterHeight / 2 - shooterHearthHeight/2,
+            canvas.height / 2 + shooterHeight / 2 - shooterHearthHeight / 2,
             shooterHearthWidth,
             shooterHearthHeight
         );
@@ -245,8 +245,14 @@ function stopAutoShoot() {
 document.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
 document.addEventListener("mouseup", (e) => stopAutoShoot());
 
-document.addEventListener("touchstart", (e) => autoShoot(pistolBullet));
-document.addEventListener("touchend", (e) => stopAutoShoot());
+document.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    autoShoot(pistolBullet);
+});
+document.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    stopAutoShoot();
+});
 
 function drawBullets() {
     if (bullets.length) bullets.forEach((bullet) => bullet.draw());
