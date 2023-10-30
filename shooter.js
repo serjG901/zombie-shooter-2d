@@ -4,6 +4,8 @@ const ctx = canvas.getContext("2d");
 const shooterImage = document.getElementById("shooter");
 const zombieImage = document.getElementById("zombie");
 const bloodZombie = document.getElementById("bloodZombie");
+const shooterHearth = document.getElementById("shooterHearth");
+const zombieHearth = document.getElementById("zombieHearth");
 
 //---------------------------------------------------------canvasRealWidth/canvasRealHeight
 let canvasRealWidth = canvas.width;
@@ -43,10 +45,10 @@ function detectLookAngleMouse(e) {
 function detectLookAngleTouch(e) {
     const touches = e.changedTouches;
     const touch = touches[0];
-    console.log(touch);
     if (touch) {
         const mouseX =
-            ((touch.clientX - canvas.offsetLeft) * canvas.width) / canvasRealWidth;
+            ((touch.clientX - canvas.offsetLeft) * canvas.width) /
+            canvasRealWidth;
         const mouseY =
             ((touch.clientY - canvas.offsetTop) * canvas.height) /
             canvasRealHeight;
@@ -117,7 +119,8 @@ const shooterWidth = 74;
 const shooterHeight = 74;
 function drawShooter() {
     ctxRotateByAngle(lookAngle);
-
+    const shooterHearthWidth = 24;
+    const shooterHearthHeight = 24;
     /*  
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2, canvas.height / 2 - 12);
@@ -137,6 +140,16 @@ function drawShooter() {
         shooterWidth,
         shooterHeight
     );
+
+    for (let i = 0; i < lifes; i++) {
+        ctx.drawImage(
+            shooterHearth,
+            canvas.width / 2 - (lifes / 2 - i) * shooterHearthWidth,
+            canvas.height / 2 + shooterHeight / 2 - shooterHearthHeight/2,
+            shooterHearthWidth,
+            shooterHearthHeight
+        );
+    }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
@@ -229,11 +242,11 @@ function stopAutoShoot() {
 
 //document.addEventListener("click", addBulletInBullets);
 
-canvas.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
-canvas.addEventListener("mouseup", (e) => stopAutoShoot());
+document.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
+document.addEventListener("mouseup", (e) => stopAutoShoot());
 
-canvas.addEventListener("touchstart", (e) => autoShoot(pistolBullet));
-canvas.addEventListener("touchend", (e) => stopAutoShoot());
+document.addEventListener("touchstart", (e) => autoShoot(pistolBullet));
+document.addEventListener("touchend", (e) => stopAutoShoot());
 
 function drawBullets() {
     if (bullets.length) bullets.forEach((bullet) => bullet.draw());
@@ -247,7 +260,9 @@ function getDrawSimpleZombie() {
     const zombieHeight = 28;
     const speed = 0.5;
     const zombieLifes = 1;
-    function drawSimpleZombie(steps = 0) {
+    const zombieHearthWidth = 24;
+    const zombieHearthHeight = 24;
+    function drawSimpleZombie(steps = 0, zombieLifes) {
         ctxRotateByAngle(angle);
         /*
         //---body
@@ -292,6 +307,15 @@ function getDrawSimpleZombie() {
             zombieWidth,
             zombieHeight * 2
         );
+        for (let i = 0; i < zombieLifes; i++) {
+            ctx.drawImage(
+                zombieHearth,
+                canvas.width / 2 - (zombieLifes / 2 - i) * zombieHearthWidth,
+                steps * speed - zombieHeight - zombieHearthHeight,
+                zombieHearthWidth,
+                zombieHearthHeight
+            );
+        }
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
@@ -336,7 +360,7 @@ function addSimpleZombie() {
         },
         draw() {
             if (speed * this.steps < canvas.height / 2 - 12) {
-                drawSimpleZombie(this.steps);
+                drawSimpleZombie(this.steps, this.zombieLifes);
                 this.steps++;
             } else {
                 filterByIdAtPlace(zombies, this.id);
@@ -428,7 +452,7 @@ function drawLifes() {
 
 //------------------------------------------------------user statistics
 let score = 0;
-let lifes = 10;
+let lifes = 3;
 
 //----end game
 
@@ -437,7 +461,7 @@ function isEndGame() {
         alert("GAME OVER");
         zombies = [];
         score = 0;
-        lifes = 10;
+        lifes = 3;
     }
 }
 
