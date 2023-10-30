@@ -12,7 +12,6 @@ const resizeCanvasObserver = new ResizeObserver((entries) => {
     const canvasBoundingClientRect = entries[0].contentRect;
     canvasRealWidth = canvasBoundingClientRect.width;
     canvasRealHeight = canvasBoundingClientRect.height;
-    console.log(canvasRealWidth, canvasRealHeight);
 });
 resizeCanvasObserver.observe(canvas);
 document.addEventListener("beforeunload", () => {
@@ -24,7 +23,7 @@ let mouseInCanvasX = 0;
 let mouseInCanvasY = 0;
 let lookAngle = 0;
 
-function detectLookAngle(e) {
+function detectLookAngleMouse(e) {
     const mouseX =
         ((e.clientX - canvas.offsetLeft) * canvas.width) / canvasRealWidth;
     const mouseY =
@@ -41,8 +40,31 @@ function detectLookAngle(e) {
     );
 }
 
-document.addEventListener("mousemove", detectLookAngle);
-document.addEventListener("touchmove", detectLookAngle);
+function detectLookAngleTouch(e) {
+    const touches = e.changedTouches;
+    const touch = touches[0];
+    console.log(touch);
+    if (touch) {
+        const mouseX =
+            ((touch.clientX - canvas.offsetLeft) * canvas.width) / canvasRealWidth;
+        const mouseY =
+            ((touch.clientY - canvas.offsetTop) * canvas.height) /
+            canvasRealHeight;
+        mouseInCanvasX =
+            mouseX < 0 ? 0 : mouseX > canvas.width ? canvas.width : mouseX;
+        mouseInCanvasY =
+            mouseY < 0 ? 0 : mouseY > canvas.height ? canvas.height : mouseY;
+        lookAngle = getAngle(
+            canvas.width,
+            canvas.height,
+            mouseInCanvasX,
+            mouseInCanvasY
+        );
+    }
+}
+
+document.addEventListener("mousemove", detectLookAngleMouse);
+document.addEventListener("touchmove", detectLookAngleTouch);
 
 //--------------------------------------------------------- support function
 function getAngle(w, h, x, y) {
