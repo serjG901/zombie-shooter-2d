@@ -4,7 +4,7 @@
 }
 
 body {
-    height: min(100svh, 100svw);
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,7 +12,7 @@ body {
 }
 
 canvas {
-    width: 100%;
+    width: 100vmin;
     aspect-ratio: 1/1;
     background-color: #ccc;
     background: radial-gradient(#3e3e3ec3, #3e3e3ec3), url(noise.svg);
