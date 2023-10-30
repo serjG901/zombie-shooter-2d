@@ -23,7 +23,8 @@ document.addEventListener("beforeunload", () => {
 let mouseInCanvasX = 0;
 let mouseInCanvasY = 0;
 let lookAngle = 0;
-document.addEventListener("mousemove", (e) => {
+
+function detectLookAngle(e) {
     const mouseX =
         ((e.clientX - canvas.offsetLeft) * canvas.width) / canvasRealWidth;
     const mouseY =
@@ -38,7 +39,10 @@ document.addEventListener("mousemove", (e) => {
         mouseInCanvasX,
         mouseInCanvasY
     );
-});
+}
+
+document.addEventListener("mousemove", detectLookAngle);
+document.addEventListener("touchmove", detectLookAngle);
 
 //--------------------------------------------------------- support function
 function getAngle(w, h, x, y) {
@@ -205,6 +209,9 @@ function stopAutoShoot() {
 
 canvas.addEventListener("mousedown", (e) => autoShoot(pistolBullet));
 canvas.addEventListener("mouseup", (e) => stopAutoShoot());
+
+canvas.addEventListener("touchstart", (e) => autoShoot(pistolBullet));
+canvas.addEventListener("touchend", (e) => stopAutoShoot());
 
 function drawBullets() {
     if (bullets.length) bullets.forEach((bullet) => bullet.draw());
