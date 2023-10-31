@@ -229,16 +229,22 @@ const pistolBullet = {
     func: addBulletInBullets,
     shotPerSecond: 10,
 };
-
+let isShootOn = false;
 let timerAutoShoot = 0;
 function autoShoot(bulletType) {
-    timerAutoShoot = setInterval(
+    if(!isShootOn) {
+        timerAutoShoot = setInterval(
         bulletType.func,
         1000 / bulletType.shotPerSecond
     );
+        isShootOn = true;
+    }
 }
 function stopAutoShoot() {
-    clearInterval(timerAutoShoot);
+    if(isShootOn) {
+        clearInterval(timerAutoShoot);
+        isShootOn = false;
+    }
 }
 
 //document.addEventListener("click", addBulletInBullets);
