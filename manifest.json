@@ -1,0 +1,15 @@
+{
+    "name": "ZombieVSShooter",
+    "short_name": "ZombieVSShooter",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000",
+    "description": "Zombie shooter 2D",
+    "icons": [
+        {
+            "src": "img/scull.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        }
+    ]
+}
