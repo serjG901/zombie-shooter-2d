@@ -1,7 +1,6 @@
 {
     "name": "ZombieVSShooter",
     "short_name": "ZombieVSShooter",
-    "start_url": ".",
     "display": "fullscreen",
     "background_color": "#000",
     "description": "Zombie shooter 2D",
