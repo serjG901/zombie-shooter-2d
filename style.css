@@ -4,7 +4,7 @@
 }
 
 body {
-    height: 100dvh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,7 +13,7 @@ body {
 }
 
 canvas {
-    width: min(100dvw, 100dvh);
+    width: 100vmin;
     aspect-ratio: 1/1;
     background-color: #ccc;
     background: radial-gradient(#3e3e3ec3, #3e3e3ec3), url(noise.svg);
