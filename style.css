@@ -13,7 +13,7 @@ body {
 }
 
 canvas {
-    width: 100vmin;
+    width: min(100dvh, 100dvw);
     aspect-ratio: 1/1;
     background-color: #ccc;
     background: radial-gradient(#3e3e3ec3, #3e3e3ec3), url(noise.svg);
