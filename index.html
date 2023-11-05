@@ -7,21 +7,41 @@
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
         />
         <title>Zombie Shooter 2D</title>
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
+        <link
+            rel="manifest"
+            href="/site.webmanifest"
+            crossorigin="use-credentials"
+        />
         <link rel="stylesheet" href="style.css" />
-        <link rel="manifest" href="site.webmanifest" crossorigin="use-credentials"/>
     </head>
 
     <body>
-        <img src="img/z1.png" alt="simple zombie body" id="zombie" />
-        <img src="img/shooter0.png" alt="man shooter body" id="shooter" />
-        <img src="img/bloodZombie.png" alt="blood zombie" id="bloodZombie" />
+        <img src="public/z1.png" alt="simple zombie body" id="zombie" />
+        <img src="public/shooter0.png" alt="man shooter body" id="shooter" />
+        <img src="public/bloodZombie.png" alt="blood zombie" id="bloodZombie" />
         <img
-            src="img/shooterHearth.png"
+            src="public/shooterHearth.png"
             alt="shooter hearth"
             id="shooterHearth"
         />
-        <img src="img/zombieHearth.png" alt="zombie hearth" id="zombieHearth" />
-        <img src="img/scull.png" alt="scull" id="scull" />
+        <img
+            src="public/zombieHearth.png"
+            alt="zombie hearth"
+            id="zombieHearth"
+        />
+        <img src="public/scull.png" alt="scull" id="scull" />
         <canvas id="gameCanvas" width="512" height="512"></canvas>
         <script src="shooter.js"></script>
     </body>
