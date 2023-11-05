@@ -116,6 +116,26 @@ function drawLaser() {
 }
 
 //------------------------------shooter
+
+const shooter = {
+    lifes: 3,
+    body: {
+        image: shooterImage,
+        width: 74,
+        height: 74,
+    },
+    hearth: {
+        image: shooterHearth,
+        width: 24,
+        height: 24,
+    },
+    gun: {
+        image: "",
+        width: 24,
+        height: 24,
+    },
+};
+
 const shooterWidth = 74;
 const shooterHeight = 74;
 function drawShooter() {
@@ -232,16 +252,16 @@ const pistolBullet = {
 let isShootOn = false;
 let timerAutoShoot = 0;
 function autoShoot(bulletType) {
-    if(!isShootOn) {
+    if (!isShootOn) {
         timerAutoShoot = setInterval(
-        bulletType.func,
-        1000 / bulletType.shotPerSecond
-    );
+            bulletType.func,
+            1000 / bulletType.shotPerSecond
+        );
         isShootOn = true;
     }
 }
 function stopAutoShoot() {
-    if(isShootOn) {
+    if (isShootOn) {
         clearInterval(timerAutoShoot);
         isShootOn = false;
     }
@@ -503,7 +523,3 @@ function animate() {
 }
 
 animate();
-
-document.addEventListener("rotarydetent", function (event) {
-    alert("Rotation direction: " + event.detail.direction);
-});
