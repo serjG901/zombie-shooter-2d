@@ -16,7 +16,7 @@ canvas {
     width: 100vmin;
     aspect-ratio: 1/1;
     background-color: #ccc;
-    background: radial-gradient(#3e3e3ec3, #3e3e3ec3), url(noise.svg);
+    background: radial-gradient(#3e3e3ec3, #3e3e3ec3), url(public/noise.svg);
     /* border-radius: 50%; */
     filter: contrast(120%);
     box-sizing: border-box;
