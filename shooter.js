@@ -44,7 +44,7 @@ function detectLookAngleMouse(e) {
 }
 
 function invertAngleByTouch(angle) {
-    return angle <= Math.PI/2 ? angle + Math.PI/2 : angle - Math.PI/2;
+    return angle <= Math.PI ? angle + Math.PI : angle - Math.PI;
 }
 
 function detectLookAngleTouch(e) {
