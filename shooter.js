@@ -43,6 +43,10 @@ function detectLookAngleMouse(e) {
     );
 }
 
+function invertAngleByTouch(angle) {
+    return angle <= Math.PI/2 ? angle + Math.PI/2 : angle - Math.PI/2;
+}
+
 function detectLookAngleTouch(e) {
     const touches = e.changedTouches;
     const touch = touches[0];
@@ -57,12 +61,12 @@ function detectLookAngleTouch(e) {
             mouseX < 0 ? 0 : mouseX > canvas.width ? canvas.width : mouseX;
         mouseInCanvasY =
             mouseY < 0 ? 0 : mouseY > canvas.height ? canvas.height : mouseY;
-        lookAngle = getAngle(
+        lookAngle = invertAngleByTouch(getAngle(
             canvas.width,
             canvas.height,
             mouseInCanvasX,
             mouseInCanvasY
-        );
+        ));
     }
 }
 
