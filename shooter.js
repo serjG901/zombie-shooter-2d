@@ -35,15 +35,15 @@ function detectLookAngleMouse(e) {
         mouseX < 0 ? 0 : mouseX > canvas.width ? canvas.width : mouseX;
     mouseInCanvasY =
         mouseY < 0 ? 0 : mouseY > canvas.height ? canvas.height : mouseY;
-    lookAngle = getAngle(
+    lookAngle = invertAngle(getAngle(
         canvas.width,
         canvas.height,
         mouseInCanvasX,
         mouseInCanvasY
-    );
+    ));
 }
 
-function invertAngleByTouch(angle) {
+function invertAngle(angle) {
     return angle <= Math.PI ? angle + Math.PI : angle - Math.PI;
 }
 
@@ -61,7 +61,7 @@ function detectLookAngleTouch(e) {
             mouseX < 0 ? 0 : mouseX > canvas.width ? canvas.width : mouseX;
         mouseInCanvasY =
             mouseY < 0 ? 0 : mouseY > canvas.height ? canvas.height : mouseY;
-        lookAngle = invertAngleByTouch(getAngle(
+        lookAngle = invertAngle(getAngle(
             canvas.width,
             canvas.height,
             mouseInCanvasX,
@@ -187,12 +187,12 @@ function getDrawPistolsBullet() {
     const bulletDamage = 1;
     const isRightThrough = false;
     const speed = 8;
-    let angle = getAngle(
+    let angle = invertAngle(getAngle(
         canvas.width,
         canvas.height,
         mouseInCanvasX,
         mouseInCanvasY
-    );
+    ));
 
     function drawPistolsBullet(step = 0) {
         ctxRotateByAngle(angle);
